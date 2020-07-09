@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'dart:math';
+import 'components/chart.dart';
 import 'components/transaction_form.dart';
 import 'components/transaction_list.dart';
 import 'models/transaction.dart';
@@ -17,20 +18,20 @@ class ExpensesApp extends StatelessWidget {
         accentColor: Colors.amber,
         fontFamily: "Quicksand",
         textTheme: ThemeData.light().textTheme.copyWith(
-            title: TextStyle(
-              fontFamily: "OpenSans",
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
+              title: TextStyle(
+                fontFamily: "OpenSans",
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+              ),
             ),
-          ),
         appBarTheme: AppBarTheme(
           textTheme: ThemeData.light().textTheme.copyWith(
-            title: TextStyle(
-              fontFamily: "OpenSans",
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
+                title: TextStyle(
+                  fontFamily: "OpenSans",
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
         ),
       ),
     );
@@ -38,31 +39,41 @@ class ExpensesApp extends StatelessWidget {
 }
 
 class MyHomePage extends StatefulWidget {
-
   @override
   _MyHomePageState createState() => _MyHomePageState();
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-
-  final List<Transaction> _transaction = [
-    // Transaction (
-    //   id: 't1',
-    //   title: 'Novo Tênias de Corrida',
-    //   value: 439.90,
-    //   date: DateTime.now(),
-    // ),
-
-    // Transaction (
-    //   id: 't2',
-    //   title: 'Conta de Energia',
-    //   value: 400.80,
-    //   date: DateTime.now(),
-    // )
-
+  final List<Transaction> _transactions = [
+    Transaction(
+      id: 't0',
+      title: 'Conta Antiga',
+      value: 1000.00,
+      date: DateTime.now().subtract(Duration(days: 33)),
+    ),
+    Transaction(
+      id: 't1',
+      title: 'Novo Tênias de Corrida',
+      value: 439.90,
+      date: DateTime.now().subtract(Duration(days: 3)),
+    ),
+    Transaction(
+      id: 't2',
+      title: 'Conta de Energia',
+      value: 400.80,
+      date: DateTime.now().subtract(Duration(days: 4)),
+    )
   ];
 
-   _addTransaction(String title, double value) {
+  List<Transaction> get _recentTransactions {
+    return _transactions.where((tr) {
+      return tr.date.isAfter(DateTime.now().subtract(
+        Duration(days: 7),
+      ));
+    }).toList();
+  }
+
+  _addTransaction(String title, double value) {
     final newTransaction = Transaction(
       id: Random().nextDouble().toString(),
       title: title,
@@ -71,20 +82,18 @@ class _MyHomePageState extends State<MyHomePage> {
     );
 
     setState(() {
-      _transaction.add(newTransaction);
+      _transactions.add(newTransaction);
     });
 
     Navigator.of(context).pop();
-
   }
 
-  _openTransactionFormModal(BuildContext context){
+  _openTransactionFormModal(BuildContext context) {
     showModalBottomSheet(
-      context: context,
-      builder: (_) {
-        return TransactionForm(_addTransaction);
-      }
-    );
+        context: context,
+        builder: (_) {
+          return TransactionForm(_addTransaction);
+        });
   }
 
   @override
@@ -99,17 +108,12 @@ class _MyHomePageState extends State<MyHomePage> {
           )
         ],
       ),
-      body: SingleChildScrollView (
+      body: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
-            Container(
-            child: Card(
-               child: Text('Gráfico'),
-               elevation: 5,
-             ),
-            ),
-            TransactionList(_transaction),            
+            Chart(_recentTransactions),
+            TransactionList(_transactions),
           ],
         ),
       ),
