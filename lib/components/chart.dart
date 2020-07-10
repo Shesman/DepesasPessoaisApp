@@ -30,7 +30,7 @@ class Chart extends StatelessWidget {
       // print(totalSum);
 
       return {'day': DateFormat.E().format(weekDay)[0], 'value': totalSum};
-    });
+    }).reversed.toList();
   }
 
   double get _weekTotalValue {
@@ -42,7 +42,7 @@ class Chart extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
-      margin: EdgeInsets.all(20),
+      margin: EdgeInsets.all(15),
       child: Padding(
         padding: const EdgeInsets.all(10.0),
         child: Row(
