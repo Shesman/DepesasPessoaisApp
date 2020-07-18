@@ -1,5 +1,6 @@
-import 'package:flutter/material.dart';
 import 'dart:math';
+import 'dart:io';
+import 'package:flutter/material.dart';
 import 'components/chart.dart';
 import 'components/transaction_form.dart';
 import 'components/transaction_list.dart';
@@ -92,8 +93,9 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
-    bool isLandscape =
-        MediaQuery.of(context).orientation == Orientation.landscape;
+    final setMediaQuery = MediaQuery.of(context);
+
+    bool isLandscape = setMediaQuery.orientation == Orientation.landscape;
 
     final appBar = AppBar(
       title: Text(
@@ -116,9 +118,9 @@ class _MyHomePageState extends State<MyHomePage> {
       ],
     );
 
-    final availableHeight = MediaQuery.of(context).size.height -
+    final availableHeight = setMediaQuery.size.height -
         appBar.preferredSize.height -
-        MediaQuery.of(context).padding.top;
+        setMediaQuery.padding.top;
 
     return Scaffold(
       appBar: appBar,
@@ -128,12 +130,12 @@ class _MyHomePageState extends State<MyHomePage> {
           children: <Widget>[
             if (_showChart || !isLandscape)
               Container(
-                height: availableHeight * (isLandscape ? 0.7 : 0.3),
+                height: availableHeight * (isLandscape ? 0.8 : 0.3),
                 child: Chart(_recentTransactions),
               ),
             if (!_showChart || !isLandscape)
               Container(
-                height: availableHeight * 0.7,
+                height: availableHeight * (isLandscape ? 1 : 0.7),
                 child: TransactionList(
                   _transactions,
                   _removeTransaction,
@@ -142,10 +144,12 @@ class _MyHomePageState extends State<MyHomePage> {
           ],
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        child: Icon(Icons.add),
-        onPressed: () => _openTransactionFormModal(context),
-      ),
+      floatingActionButton: Platform.isIOS
+          ? Container()
+          : FloatingActionButton(
+              child: Icon(Icons.add),
+              onPressed: () => _openTransactionFormModal(context),
+            ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
     );
   }
