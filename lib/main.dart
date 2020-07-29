@@ -132,7 +132,7 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
           )
         : AppBar(
-            title: Text(
+            title: const Text(
               'Despesas Pessoais',
             ),
             actions: actions,
